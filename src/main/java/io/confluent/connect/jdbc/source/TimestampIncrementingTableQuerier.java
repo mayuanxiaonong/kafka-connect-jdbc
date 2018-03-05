@@ -60,18 +60,21 @@ public class TimestampIncrementingTableQuerier extends TableQuerier {
 
   private static final BigDecimal LONG_MAX_VALUE_AS_BIGDEC = new BigDecimal(Long.MAX_VALUE);
 
+  private JdbcSourceConnectorConfig config;
   private String timestampColumn;
   private String incrementingColumn;
   private String timestampColumnType;
   private long timestampDelay;
   private TimestampIncrementingOffset offset;
 
-  public TimestampIncrementingTableQuerier(QueryMode mode, String name, String topicPrefix,
+  public TimestampIncrementingTableQuerier(JdbcSourceConnectorConfig config,
+                                           QueryMode mode, String name, String topicPrefix,
                                            String timestampColumn, String incrementingColumn,
                                            String timestampColumnType,
                                            Map<String, Object> offsetMap, Long timestampDelay,
                                            String schemaPattern, boolean mapNumerics) {
     super(mode, name, topicPrefix, schemaPattern, mapNumerics);
+    this.config = config;
     this.timestampColumn = timestampColumn;
     this.incrementingColumn = incrementingColumn;
     this.timestampColumnType = timestampColumnType;
@@ -166,6 +169,17 @@ public class TimestampIncrementingTableQuerier extends TableQuerier {
 
   @Override
   protected ResultSet executeQuery() throws SQLException {
+    if (timestampColumn != null && offset.getTimestampOffset() == null) {
+      Timestamp ts = null;
+      Long defaultOffset = config.getLong(JdbcSourceTaskConfig.TIMESTAMP_DEFAULT_OFFSET_CONFIG);
+      if (defaultOffset == JdbcSourceTaskConfig.TIMESTAMP_DEFAULT_OFFSET_DEFAULT) {
+        ts = JdbcUtils.getCurrentTimeOnDB(stmt.getConnection(), DateTimeUtils.UTC_CALENDAR.get());
+      } else {
+        ts = new Timestamp(defaultOffset);
+      }
+      offset = new TimestampIncrementingOffset(ts, offset.getIncrementingOffset());
+    }
+
     if (incrementingColumn != null && timestampColumn != null) {
       Timestamp tsOffset = offset.getTimestampOffset();
       Long incOffset = offset.getIncrementingOffset();

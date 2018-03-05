@@ -158,14 +158,17 @@ public class JdbcSourceTask extends SourceTask {
                 topicPrefix, mapNumerics));
       } else if (mode.equals(JdbcSourceTaskConfig.MODE_INCREMENTING)) {
         tableQueue.add(new TimestampIncrementingTableQuerier(
+            config,
             queryMode, tableOrQuery, topicPrefix, null, incrementingColumn, null,
                 offset, timestampDelayInterval, schemaPattern, mapNumerics));
       } else if (mode.equals(JdbcSourceTaskConfig.MODE_TIMESTAMP)) {
         tableQueue.add(new TimestampIncrementingTableQuerier(
+            config,
             queryMode, tableOrQuery, topicPrefix, timestampColumn, null, timestampColumnType,
                 offset, timestampDelayInterval, schemaPattern, mapNumerics));
       } else if (mode.endsWith(JdbcSourceTaskConfig.MODE_TIMESTAMP_INCREMENTING)) {
         tableQueue.add(new TimestampIncrementingTableQuerier(
+            config,
             queryMode, tableOrQuery, topicPrefix, timestampColumn, incrementingColumn,
                 timestampColumnType, offset, timestampDelayInterval, schemaPattern, mapNumerics));
       }

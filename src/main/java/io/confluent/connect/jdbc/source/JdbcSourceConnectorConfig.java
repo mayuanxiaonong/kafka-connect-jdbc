@@ -125,6 +125,12 @@ public class JdbcSourceConnectorConfig extends AbstractConfig {
   public static final String TIMESTAMP_COLUMN_NAME_DEFAULT = "";
   private static final String TIMESTAMP_COLUMN_NAME_DISPLAY = "Timestamp Column Name";
 
+  public static final String TIMESTAMP_DEFAULT_OFFSET_CONFIG = "timestamp.default.offset";
+  private static final String TIMESTAMP_DEFAULT_OFFSET_DOC =
+      "The timestamp offset in ms from when to poll data. Default -1 as the max timestamp on db.";
+  public static final long TIMESTAMP_DEFAULT_OFFSET_DEFAULT = -1;
+  private static final String TIMESTAMP_DEFAULT_OFFSET_DISPLAY = "Timestamp Default Offset";
+
   public static final String TIMESTAMP_COLUMN_TYPE_CONFIG = "timestamp.column.type";
   private static final String TIMESTAMP_COLUMN_TYPE_DOC =
       "The type of the timestamp column to use to set parameters in query.\n"
@@ -395,6 +401,17 @@ public class JdbcSourceConnectorConfig extends AbstractConfig {
         3,
         Width.MEDIUM,
         TIMESTAMP_COLUMN_NAME_DISPLAY,
+        MODE_DEPENDENTS_RECOMMENDER
+    ).define(
+        TIMESTAMP_DEFAULT_OFFSET_CONFIG,
+        Type.LONG,
+        TIMESTAMP_DEFAULT_OFFSET_DEFAULT,
+        Importance.MEDIUM,
+        TIMESTAMP_DEFAULT_OFFSET_DOC,
+        MODE_GROUP,
+        4,
+        Width.MEDIUM,
+        TIMESTAMP_DEFAULT_OFFSET_DISPLAY,
         MODE_DEPENDENTS_RECOMMENDER
     ).define(
         TIMESTAMP_COLUMN_TYPE_CONFIG,
